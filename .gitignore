@@ -4,6 +4,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+*.lock.hcl
 
 # Crash log files
 crash.log
@@ -46,3 +47,5 @@ terraform.rc
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+.DS_Store
