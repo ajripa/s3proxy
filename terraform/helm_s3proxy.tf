@@ -5,7 +5,7 @@
 # OIDC approach is a far better solution
 
 # IAM Role
-module "iam_assumable_role_external_dns" {
+module "iam_assumable_s3_proxy_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "3.6.0"
 
@@ -23,7 +23,7 @@ module "iam_assumable_role_external_dns" {
 
 resource "aws_iam_policy" "s3proxy_policy" {
   name_prefix = "s3proxy"
-  description = "Allow access to S3Proxy buclet"
+  description = "Allow access to S3Proxy bucket"
   policy      = <<EOF
 {
     "Version": "2012-10-17",
@@ -65,7 +65,7 @@ resource "helm_release" "s3proxy" {
     serviceAccount:
         create: true
         annotations:
-            eks.amazonaws.com/role-arn: ${module.iam_assumable_role_external_dns.this_iam_role_arn}
+            eks.amazonaws.com/role-arn: ${module.iam_assumable_s3_proxy_role.this_iam_role_arn}
         name: "${var.eks_service_account_name}"
     ingress:
         enabled: true
