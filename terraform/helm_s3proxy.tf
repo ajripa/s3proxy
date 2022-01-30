@@ -29,6 +29,7 @@ resource "aws_iam_policy" "s3proxy_policy" {
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "GrantAccess",
             "Action": "s3:*",
             "Effect": "Allow",
             "Resource": [

@@ -9,6 +9,8 @@ The Engineering Productivity team would like to expose the contents of an S3 buc
 - Helm to create the kubernetes manifests
 - AWS CLI to populate S3 buckets and get access to ECR repositories
 
+A devcontainer template is provided to build up a container environment for VSCode.
+
 # Assumptions and trade-offs
 
 - A client credentials and a role with the minimum permission needed to deploy the resources and to access to K8S cluster has been provided by our administrator.

@@ -1,26 +1,45 @@
-from email.policy import default
-from importlib.resources import path
-from tkinter import EW
-from flask import Flask, make_response, request, jsonify
+from flask import Flask, make_response, request, jsonify, send_from_directory
 import os
 import boto3
 import json
 import logging
 
-
+# Get bucket name from environment variable
 s3_bucket = os.environ.get('S3_BUCKET')
 
+# Define app name
 app = Flask(__name__)
 
+# Use Gunicorn logger
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+
+# Health check. K8S will use it to check the status of the pod
 @app.route('/health')
 def health():
-    return jsonify({"status": "healthy"})
+    # Bucket not defined
+    if s3_bucket is not None:
+        # Test if we can access the bucket
+        s3 = boto3.client('s3')
+        s3_object = s3.head_bucket(Bucket=s3_bucket)
+        print(s3_object)
+        return json.dumps(s3_object)
+    else:
+        return jsonify({
+            "status":"error",
+            "description": "bucket not defined"
+        }) , 500
+        
 
+# Catch-all route. Process all the requests.
 @app.route('/', methods=['GET'], defaults={'path': ''})
 @app.route('/<path:path>')
 def all(path):
@@ -32,4 +51,4 @@ def all(path):
     return response
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='127.0.0.1')
