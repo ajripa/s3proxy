@@ -7,7 +7,7 @@
 # IAM Role
 module "iam_assumable_s3_proxy_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "3.6.0"
+  version = "5.33.0"
 
   create_role                   = true
   role_name                     = "s3proxy-role"
@@ -29,13 +29,21 @@ resource "aws_iam_policy" "s3proxy_policy" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "GrantAccess",
-            "Action": "s3:*",
+            "Sid": "AllowBucketAccess",
+            "Action": [
+                "s3:HeadBucket"
+            ],
             "Effect": "Allow",
-            "Resource": [
-                "${aws_s3_bucket.bucket.arn}",
-                "${aws_s3_bucket.bucket.arn}/*"
-            ]
+            "Resource": "${aws_s3_bucket.bucket.arn}"
+        },
+        {
+            "Sid": "AllowObjectRead",
+            "Action": [
+                "s3:GetObject",
+                "s3:HeadObject"
+            ],
+            "Effect": "Allow",
+            "Resource": "${aws_s3_bucket.bucket.arn}/*"
         }
     ]
 }
