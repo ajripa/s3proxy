@@ -40,13 +40,15 @@ variable "docker_image_name" {
 
 ### HTTP Basic auth ###
 variable "http_auth_user" {
-    type = string
+    type        = string
     description = "HTTP user name"
+    sensitive   = true
 }
 
 variable "http_auth_pass" {
-    type = string
+    type        = string
     description = "HTTP user pass"
+    sensitive   = true
 }
 
 ### Tags ###
